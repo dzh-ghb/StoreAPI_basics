@@ -11,7 +11,9 @@ namespace Api.Data
 
         }
 
-        // описание таблицы
+        // описание таблицы, обозначающей EF тип основного юзера в БД (механизм TPH - Table Per Hierarchy)
         public DbSet<AppUser> AppUsers { get; set; }
+
+        public DbSet<Product> Products { get; set; }
     }
 }
