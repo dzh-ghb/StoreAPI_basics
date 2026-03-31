@@ -1,20 +1,26 @@
+using System.Net;
 using Api.Data;
 using Api.Model;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
 {
-    public class ProductController : StoreController
+    public class ProductsController : StoreController
     {
-        public ProductController(IStorage storage) : base(storage)
+        public ProductsController(IStorage storage) : base(storage)
         {
         }
 
         [HttpGet]
-        public async Task<ActionResult<string>> GetAll()
+        public async Task<ActionResult<List<Product>>> GetAll()
         {
-            // return Ok(await Task.FromResult<string>("_DZHITS"));
-            return Ok(await Task.FromResult(storage.GetAllProducts()));
+            ResponseServer response = new ResponseServer
+            {
+                StatusCode = HttpStatusCode.OK,
+                Result = await Task.FromResult(storage.GetAllProducts())
+            };
+
+            return Ok(response);
         }
     }
 }
