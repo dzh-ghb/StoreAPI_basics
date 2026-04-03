@@ -3,9 +3,9 @@ using System.Net;
 namespace Api.Model
 {
     // описание собирательной модели ответа сервера
-    public class ResponseServer
+    public class ServerResponse
     {
-        public ResponseServer()
+        public ServerResponse()
         {
             this.IsSuccess = true;
             this.ErrorMessages = new();

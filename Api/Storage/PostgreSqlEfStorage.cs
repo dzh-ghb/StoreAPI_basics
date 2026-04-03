@@ -1,5 +1,6 @@
 using Api.Data;
 using Api.Model;
+using Api.ModelDto;
 
 public class PostgreSqlEfStorage : IStorage
 {
@@ -8,6 +9,25 @@ public class PostgreSqlEfStorage : IStorage
     public PostgreSqlEfStorage(AppDbContext dbContext)
     {
         this.dbContext = dbContext;
+    }
+
+    public Product AddProduct(ProductCreateDto productCreateDto)
+    {
+        Product item = new()
+        {
+            Name = productCreateDto.Name,
+            Description = productCreateDto.Description,
+            SpecialTag = productCreateDto.SpecialTag,
+            Category = productCreateDto.Category,
+            Price = productCreateDto.Price,
+            Image = productCreateDto.Image
+        };
+
+        // добавление в БД
+        dbContext.Products.Add(item);
+        dbContext.SaveChanges();
+
+        return item;
     }
 
     public List<Product> GetAllProducts()
