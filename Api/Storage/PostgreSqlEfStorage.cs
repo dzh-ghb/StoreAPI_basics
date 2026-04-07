@@ -20,7 +20,8 @@ public class PostgreSqlEfStorage : IStorage
             SpecialTag = productCreateDto.SpecialTag,
             Category = productCreateDto.Category,
             Price = productCreateDto.Price,
-            Image = productCreateDto.Image
+            // Image = productCreateDto.Image // более корректный вариант для финальной версии
+            Image = $"https://placehold.co/100" // демо-вариант с фейковым значением
         };
 
         // добавление в БД

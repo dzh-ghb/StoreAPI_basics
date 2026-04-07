@@ -33,10 +33,6 @@ namespace Api.Controllers
                     }
                     else
                     {
-                        // демо-вариант с фейковым значением
-                        productCreateDto.Image = $"https://placehold.co/100";
-                        // Image = productCreateDto.Image // более корректный вариант для финальной версии
-
                         Product addedProduct = await Task.FromResult(storage.AddProduct(productCreateDto));
 
                         ServerResponse response = new()
