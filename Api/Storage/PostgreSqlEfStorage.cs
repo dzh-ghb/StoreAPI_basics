@@ -1,6 +1,8 @@
+using Api.Common;
 using Api.Data;
 using Api.Model;
 using Api.ModelDto;
+using Microsoft.AspNetCore.Identity;
 
 public class PostgreSqlEfStorage : IStorage
 {
@@ -10,6 +12,8 @@ public class PostgreSqlEfStorage : IStorage
     {
         this.dbContext = dbContext;
     }
+
+    #region ProductsInfrastructure
 
     public Product AddProduct(ProductCreateDto productCreateDto)
     {
@@ -87,4 +91,55 @@ public class PostgreSqlEfStorage : IStorage
 
         return true;
     }
+
+    #endregion
+
+    #region AuthInfrastructure
+
+    public async Task<bool> AddUser(RegisterRequestDto registerRequestDto, UserManager<AppUser> userManager/*, RoleManager<IdentityRole> roleManager*/)
+    {
+        AppUser user = new AppUser
+        {
+            UserName = registerRequestDto.UserName,
+            Email = registerRequestDto.Email,
+            // NormalizedEmail = registerRequestDto.Email.ToUpper(),
+            FirstName = registerRequestDto.UserName
+        };
+
+        // попытка создания юзера
+        var result = await userManager.CreateAsync(user, registerRequestDto.Password);
+
+        if (!result.Succeeded)
+        {
+            return false;
+        }
+
+        // определение указанной роли
+        var role = registerRequestDto.Role.Equals(
+            SharedData.Roles.Admin, StringComparison.OrdinalIgnoreCase)
+            ? SharedData.Roles.Admin
+            : SharedData.Roles.Consumer;
+
+        // привязка юзера к роли
+        await userManager.AddToRoleAsync(user, role);
+
+        return true;
+    }
+
+    // public AppUser GetRegisteredUser(RegisterRequestDto registerRequestDto)
+    public AppUser GetUser(IRequestDto requestDto)
+    {
+        return dbContext
+            .AppUsers
+            .FirstOrDefault(u => u.UserName.ToLower() == requestDto.UserName.ToLower());
+    }
+
+    // public AppUser GetLoginnedUser(LoginRequestDto loginRequestDto)
+    // {
+    //     return dbContext
+    //         .AppUsers
+    //         .FirstOrDefault(u => u.Email.ToLower() == loginRequestDto.Email.ToLower());
+    // }
+
+    #endregion
 }
