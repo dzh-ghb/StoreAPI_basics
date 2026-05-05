@@ -14,8 +14,9 @@ namespace Api.Data
 
         // описание таблицы, обозначающей EF тип основного юзера в БД (механизм TPH - Table Per Hierarchy)
         public DbSet<AppUser> AppUsers { get; set; }
-
         public DbSet<Product> Products { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
