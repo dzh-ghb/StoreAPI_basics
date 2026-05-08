@@ -19,6 +19,8 @@ builder.Services.AddAuthenticationConfig(builder.Configuration);
 // подключение CORS-политики для разрешения/запрета обработки запросов из различных источников
 builder.Services.AddCors();
 
+builder.Services.AddShoppingCartService();
+
 builder.Services.AddScoped<IStorage, PostgreSqlEfStorage>();
 
 // сборка приложения и конвейера обработки запросов
