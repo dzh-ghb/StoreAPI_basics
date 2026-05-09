@@ -23,5 +23,7 @@ public interface IStorage
 
     // AppUser GetLoginnedUser(LoginRequestDto loginRequestDto);
 
+    bool IsUserFindedById(string userId);
+
     #endregion
 }

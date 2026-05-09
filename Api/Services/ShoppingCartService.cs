@@ -18,6 +18,7 @@ namespace Api.Services
             ShoppingCart newCart = new ShoppingCart
             {
                 UserId = userId
+                // CartItems = new List<CartItem>()
             };
 
             await dbContext.ShoppingCarts.AddAsync(newCart);
@@ -85,10 +86,12 @@ namespace Api.Services
         // метод получения корзины со всем содержимым
         public async Task<ShoppingCart> GetShoppingCartAsync(string userId)
         {
+            // TODO: корректно ли?
             if (string.IsNullOrEmpty(userId))
             {
                 // создание корзины, если юзер новый
-                return new ShoppingCart();
+                // return new ShoppingCart();
+                return null;
             }
 
             ShoppingCart shoppingCart = await dbContext
