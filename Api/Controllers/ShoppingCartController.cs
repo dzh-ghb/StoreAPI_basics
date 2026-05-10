@@ -20,8 +20,8 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ServerResponse>> AppendOrUpdateItemInCart(string userId, int productId, int updateQuantity)
         {
-            bool isUserExist = await Task.FromResult(storage.IsUserFindedById(userId));
-            if (isUserExist == false)
+            bool isUserExist = storage.UserExistsById(userId); // await Task.FromResult - искусственный async (TODO: убрать везде)
+            if (string.IsNullOrWhiteSpace(userId) || isUserExist == false)
             {
                 return BadRequest(new ServerResponse
                 {
@@ -41,7 +41,7 @@ namespace Api.Controllers
                 });
             }
 
-            Product product = await Task.FromResult(storage.GetProduct(productId));
+            Product product = storage.GetProduct(productId);
             if (product == null)
             {
                 return NotFound(new ServerResponse
@@ -72,8 +72,8 @@ namespace Api.Controllers
         [HttpGet]
         public async Task<ActionResult<ServerResponse>> GetShoppingCart(string userId)
         {
-            bool isUserExist = await Task.FromResult(storage.IsUserFindedById(userId));
-            if (isUserExist == false)
+            bool isUserExist = storage.UserExistsById(userId);
+            if (string.IsNullOrWhiteSpace(userId) || isUserExist == false)
             {
                 return BadRequest(new ServerResponse
                 {
