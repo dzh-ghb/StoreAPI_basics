@@ -17,7 +17,7 @@ namespace Api.Controllers
             this.shoppingCartService = shoppingCartService;
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult<ServerResponse>> AppendOrUpdateItemInCart(string userId, int productId, int updateQuantity)
         {
             bool isUserExist = storage.UserExistsById(userId); // await Task.FromResult - искусственный async (TODO: убрать везде)
