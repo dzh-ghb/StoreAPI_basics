@@ -134,12 +134,11 @@ public class PostgreSqlEfStorage : IStorage
             .FirstOrDefault(u => u.UserName.ToLower() == requestDto.UserName.ToLower());
     }
 
-    // public AppUser GetLoginnedUser(LoginRequestDto loginRequestDto)
-    // {
-    //     return dbContext
-    //         .AppUsers
-    //         .FirstOrDefault(u => u.Email.ToLower() == loginRequestDto.Email.ToLower());
-    // }
+    public bool UserExistsById(string userId)
+    {
+        return !string.IsNullOrWhiteSpace(userId) &&
+            dbContext.AppUsers.FirstOrDefault(u => u.Id.ToLower() == userId.ToLower()) != null;
+    }
 
     #endregion
 }
