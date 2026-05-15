@@ -1,5 +1,6 @@
 # my exceptions
 .vscode
+*.lscache
 
 appsettings.Development.json
 appsettings.json
