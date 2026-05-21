@@ -14,6 +14,6 @@ namespace Api.ModelDto
         public double OrderTotalAmount { get; set; }
         public string Status { get; set; }
         public int TotalCount { get; set; }
-        public IEnumerable<OrderDetailsCreateDto> OrderDetailDto { get; set; }
+        public IEnumerable<OrderDetailsCreateDto> OrderDetailsDto { get; set; }
     }
 }
