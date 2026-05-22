@@ -20,15 +20,16 @@ namespace Api.Services
         {
             var order = new OrderHeader
             {
-                AppUserId = orderHeaderCreateDto.AppUserId,
                 CustomerName = orderHeaderCreateDto.CustomerName,
                 CustomerPhoneNumber = orderHeaderCreateDto.CustomerPhoneNumber,
                 CustomerEmail = orderHeaderCreateDto.CustomerEmail,
+                AppUserId = orderHeaderCreateDto.AppUserId,
                 OrderTotalAmount = orderHeaderCreateDto.OrderTotalAmount,
-                TotalCount = orderHeaderCreateDto.TotalCount,
+                OrderDateTime = DateTime.UtcNow,
                 Status = string.IsNullOrEmpty(orderHeaderCreateDto.Status)
                     ? SharedData.OrderStatuses.Pending
-                    : orderHeaderCreateDto.Status
+                    : orderHeaderCreateDto.Status,
+                TotalCount = orderHeaderCreateDto.TotalCount,
             };
 
             await dbContext.OrderHeaders.AddAsync(order);

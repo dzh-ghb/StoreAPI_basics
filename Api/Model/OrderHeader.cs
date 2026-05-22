@@ -15,7 +15,7 @@ namespace Api.Model
         public string CustomerEmail { get; set; }
         public string AppUserId { get; set; }
         [ForeignKey("AppUserId")]
-        public AppUser User { get; set; }
+        public AppUser User { get; set; } // TODO: нужно ли?
         public double OrderTotalAmount { get; set; }
         public DateTime OrderDateTime { get; set; }
         public string Status { get; set; }
