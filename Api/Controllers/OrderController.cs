@@ -54,5 +54,49 @@ namespace Api.Controllers
                 });
             }
         }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServerResponse>> GetOrder(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Указан некорректный ID" }
+                });
+            }
+
+            try
+            {
+                var orderHeader = await ordersService.GetOrderById(id);
+
+                if (orderHeader == null)
+                {
+                    return NotFound(new ServerResponse
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.NotFound,
+                        ErrorMessages = { "Заказ не найден" }
+                    });
+                }
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = orderHeader
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Ошибка:", ex.Message }
+                });
+            }
+        }
     }
 }
