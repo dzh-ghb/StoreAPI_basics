@@ -56,7 +56,7 @@ namespace Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ServerResponse>> GetOrder(int id)
+        public async Task<ActionResult<ServerResponse>> Get(int id)
         {
             if (id <= 0)
             {
