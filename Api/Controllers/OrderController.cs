@@ -2,6 +2,7 @@ using System.Net;
 using Api.Model;
 using Api.ModelDto;
 using Api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers
@@ -50,7 +51,7 @@ namespace Api.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.BadRequest,
-                    ErrorMessages = { "Ошибка:", ex.Message }
+                    ErrorMessages = { "Ошибка", ex.Message }
                 });
             }
         }
@@ -94,7 +95,7 @@ namespace Api.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.BadRequest,
-                    ErrorMessages = { "Ошибка:", ex.Message }
+                    ErrorMessages = { "Ошибка", ex.Message }
                 });
             }
         }
@@ -119,7 +120,46 @@ namespace Api.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.InternalServerError,
-                    ErrorMessages = { "Ошибка:", ex.Message }
+                    ErrorMessages = { "Ошибка", ex.Message }
+                });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ServerResponse>> UpdateHeader(
+            int id,
+            [FromBody] OrderHeaderUpdateDto orderHeaderUpdateDto
+        )
+        {
+            try
+            {
+                var success = await ordersService.UpdateOrderHeaderAsync(id, orderHeaderUpdateDto);
+
+                if (!success)
+                {
+                    return BadRequest(new ServerResponse
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = { "Ошибка обновления данных" }
+                    });
+                }
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = new { Success = true, Message = "Обновление успешно завершено" }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessages = { "Ошибка", ex.Message }
                 });
             }
         }
