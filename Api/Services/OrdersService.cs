@@ -55,13 +55,31 @@ namespace Api.Services
             return order;
         }
 
-        public async Task<OrderHeader> GetOrderById(int id)
+        public async Task<OrderHeader> GetOrderByIdAsync(int id)
         {
             return await dbContext
                 .OrderHeaders
                 .Include(i => i.OrderDetailItems)
                 .ThenInclude(x => x.Product)
                 .FirstOrDefaultAsync(u => u.OrderHeaderId == id);
+        }
+
+        public async Task<IEnumerable<OrderHeader>> GetOrderByUserIdAsync(string userId)
+        {
+            var query = dbContext
+                .OrderHeaders
+                .Include(i => i.OrderDetailItems)
+                .ThenInclude(x => x.Product)
+                .OrderByDescending(u => u.AppUserId);
+
+            if (!string.IsNullOrWhiteSpace(userId)) // IsNullOrEmpty
+            {
+                return await query
+                    .Where(u => u.AppUserId == userId)
+                    .ToListAsync();
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

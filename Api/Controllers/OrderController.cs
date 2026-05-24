@@ -70,7 +70,7 @@ namespace Api.Controllers
 
             try
             {
-                var orderHeader = await ordersService.GetOrderById(id);
+                var orderHeader = await ordersService.GetOrderByIdAsync(id);
 
                 if (orderHeader == null)
                 {
@@ -94,6 +94,31 @@ namespace Api.Controllers
                 {
                     IsSuccess = false,
                     StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Ошибка:", ex.Message }
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ServerResponse>> GetByUserId(string userId)
+        {
+            try
+            {
+                var orderHeader = await ordersService.GetOrderByUserIdAsync(userId);
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = orderHeader
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
                     ErrorMessages = { "Ошибка:", ex.Message }
                 });
             }
