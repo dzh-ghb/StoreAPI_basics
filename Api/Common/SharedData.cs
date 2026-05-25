@@ -20,5 +20,17 @@ namespace Api.Common
             // }
             #endregion
         }
+
+        public static class OrderStatuses
+        {
+            public const string Pending = "pending";
+            public const string ReadyToShip = "ready_to_ship";
+            public const string Completed = "completed";
+
+            public static IReadOnlyList<string> AllStatuses
+            {
+                get => new List<string>() { Pending, ReadyToShip, Completed };
+            }
+        }
     }
 }

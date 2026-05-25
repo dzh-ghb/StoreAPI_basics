@@ -1,0 +1,167 @@
+using System.Net;
+using Api.Model;
+using Api.ModelDto;
+using Api.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Api.Controllers
+{
+    public class OrderController : StoreController
+    {
+        private readonly OrdersService ordersService;
+
+        public OrderController(
+            IStorage storage,
+            OrdersService ordersService)
+            : base(storage)
+        {
+            this.ordersService = ordersService;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ServerResponse>> Create(
+            [FromBody] OrderHeaderCreateDto orderHeaderCreateDto
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Невалидное состояние модели заказа" }
+                });
+            }
+
+            try
+            {
+                var order = await ordersService.CreateOrderAsync(orderHeaderCreateDto);
+                // order.OrderDetailItems = null;
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.Created,
+                    Result = order
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Ошибка", ex.Message }
+                });
+            }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ServerResponse>> Get(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Указан некорректный ID" }
+                });
+            }
+
+            try
+            {
+                var orderHeader = await ordersService.GetOrderByIdAsync(id);
+
+                if (orderHeader == null)
+                {
+                    return NotFound(new ServerResponse
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.NotFound,
+                        ErrorMessages = { "Заказ не найден" }
+                    });
+                }
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = orderHeader
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Ошибка", ex.Message }
+                });
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<ServerResponse>> GetByUserId(string userId)
+        {
+            try
+            {
+                var orderHeader = await ordersService.GetOrderByUserIdAsync(userId);
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = orderHeader
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessages = { "Ошибка", ex.Message }
+                });
+            }
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ServerResponse>> UpdateHeader(
+            int id,
+            [FromBody] OrderHeaderUpdateDto orderHeaderUpdateDto
+        )
+        {
+            try
+            {
+                var success = await ordersService.UpdateOrderHeaderAsync(id, orderHeaderUpdateDto);
+
+                if (!success)
+                {
+                    return BadRequest(new ServerResponse
+                    {
+                        IsSuccess = false,
+                        StatusCode = HttpStatusCode.BadRequest,
+                        ErrorMessages = { "Ошибка обновления данных" }
+                    });
+                }
+
+                return Ok(new ServerResponse
+                {
+                    StatusCode = HttpStatusCode.OK,
+                    Result = new { Success = true, Message = "Обновление успешно завершено" }
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError,
+                new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.InternalServerError,
+                    ErrorMessages = { "Ошибка", ex.Message }
+                });
+            }
+        }
+    }
+}

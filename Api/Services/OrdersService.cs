@@ -1,0 +1,125 @@
+using Api.Common;
+using Api.Data;
+using Api.Model;
+using Api.ModelDto;
+using Microsoft.EntityFrameworkCore;
+
+namespace Api.Services
+{
+    public class OrdersService
+    {
+        private readonly AppDbContext dbContext;
+
+        public OrdersService(AppDbContext dbContext)
+        {
+            this.dbContext = dbContext;
+        }
+
+        public async Task<OrderHeader> CreateOrderAsync(
+            OrderHeaderCreateDto orderHeaderCreateDto
+        )
+        {
+            var order = new OrderHeader
+            {
+                CustomerName = orderHeaderCreateDto.CustomerName,
+                CustomerPhoneNumber = orderHeaderCreateDto.CustomerPhoneNumber,
+                CustomerEmail = orderHeaderCreateDto.CustomerEmail,
+                AppUserId = orderHeaderCreateDto.AppUserId,
+                OrderTotalAmount = orderHeaderCreateDto.OrderTotalAmount,
+                OrderDateTime = DateTime.UtcNow,
+                Status = string.IsNullOrEmpty(orderHeaderCreateDto.Status)
+                    ? SharedData.OrderStatuses.Pending
+                    : orderHeaderCreateDto.Status,
+                TotalCount = orderHeaderCreateDto.TotalCount,
+            };
+
+            await dbContext.OrderHeaders.AddAsync(order);
+            await dbContext.SaveChangesAsync();
+
+            foreach (var orderDetailsDto in orderHeaderCreateDto.OrderDetailsDto)
+            {
+                var orderDetails = new OrderDetails
+                {
+                    OrderHeaderId = order.OrderHeaderId,
+                    ProductId = orderDetailsDto.ProductId,
+                    Quantity = orderDetailsDto.Quantity,
+                    ItemName = orderDetailsDto.ItemName,
+                    Price = orderDetailsDto.Price,
+                };
+
+                await dbContext.OrderDetails.AddAsync(orderDetails);
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return order;
+        }
+
+        public async Task<OrderHeader> GetOrderByIdAsync(int id)
+        {
+            return await dbContext
+                .OrderHeaders
+                .Include(i => i.OrderDetailItems)
+                .ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(u => u.OrderHeaderId == id);
+        }
+
+        public async Task<IEnumerable<OrderHeader>> GetOrderByUserIdAsync(string userId)
+        {
+            var query = dbContext
+                .OrderHeaders
+                .Include(i => i.OrderDetailItems)
+                .ThenInclude(x => x.Product)
+                .OrderByDescending(u => u.AppUserId);
+
+            if (!string.IsNullOrWhiteSpace(userId)) // IsNullOrEmpty
+            {
+                return await query
+                    .Where(u => u.AppUserId == userId)
+                    .ToListAsync();
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<bool> UpdateOrderHeaderAsync(
+            int id,
+            OrderHeaderUpdateDto orderHeaderUpdateDto
+        )
+        {
+            if (orderHeaderUpdateDto == null || orderHeaderUpdateDto.OrderHeaderId != id)
+            {
+                return false;
+            }
+
+            var orderHeaderFromDb = await dbContext
+                .OrderHeaders
+                .FirstOrDefaultAsync(i => i.OrderHeaderId == id);
+
+            if (orderHeaderFromDb == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(orderHeaderUpdateDto.CustomerName))
+            {
+                orderHeaderFromDb.CustomerName = orderHeaderUpdateDto.CustomerName;
+            }
+            if (!string.IsNullOrWhiteSpace(orderHeaderUpdateDto.CustomerPhoneNumber))
+            {
+                orderHeaderFromDb.CustomerPhoneNumber = orderHeaderUpdateDto.CustomerPhoneNumber;
+            }
+            if (!string.IsNullOrWhiteSpace(orderHeaderUpdateDto.CustomerEmail))
+            {
+                orderHeaderFromDb.CustomerEmail = orderHeaderUpdateDto.CustomerEmail;
+            }
+            if (!string.IsNullOrWhiteSpace(orderHeaderUpdateDto.Status))
+            {
+                orderHeaderFromDb.Status = orderHeaderUpdateDto.Status;
+            }
+
+            await dbContext.SaveChangesAsync();
+            return true;
+        }
+    }
+}
