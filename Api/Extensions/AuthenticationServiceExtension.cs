@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
 // расширение для регистрации процесса обработки запросов, содержащих JWT
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class AuthenticationServiceExtension
     {

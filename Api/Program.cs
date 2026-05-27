@@ -1,4 +1,4 @@
-using Api.Extension;
+using Api.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,7 @@ builder.Services.AddCors();
 
 builder.Services.AddShoppingCartService();
 builder.Services.AddOrdersService();
+builder.Services.AddPaymentService();
 
 builder.Services.AddScoped<IStorage, PostgreSqlEfStorage>();
 

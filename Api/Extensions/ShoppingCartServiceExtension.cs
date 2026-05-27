@@ -1,6 +1,6 @@
 using Api.Services;
 
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class ShoppingCartServiceExtension
     {

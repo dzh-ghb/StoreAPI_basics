@@ -2,7 +2,7 @@ using Api.Common;
 using Microsoft.AspNetCore.Identity;
 
 // расширение для наполнения таблицы с ролями
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class RoleInitializerServiceExtension
     {
