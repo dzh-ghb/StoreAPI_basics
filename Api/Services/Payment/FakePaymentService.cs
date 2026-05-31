@@ -20,7 +20,7 @@ namespace Api.Services.Payment
         {
             var shoppingCart = await new ShoppingCartService(dbContext).GetShoppingCartAsync(userId); // TODO: внедрить зависимость через конструктор
 
-            if (shoppingCart == null || shoppingCart.CartItems == null)
+            if (shoppingCart == null || shoppingCart.CartItems == null || shoppingCart.CartItems.Count == 0)
             {
                 return new BadRequestObjectResult(new ServerResponse
                 {
