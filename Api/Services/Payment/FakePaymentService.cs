@@ -1,10 +1,8 @@
 using System.Net;
 using Api.Common;
-using Api.Data;
 using Api.Model;
 using Api.ModelDto;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Api.Services.Payment
 {
