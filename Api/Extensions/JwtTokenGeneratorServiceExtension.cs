@@ -1,7 +1,7 @@
 using Api.Services;
 
 // расширение для подключения сервиса генерации JWT
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class JwtTokenGeneratorServiceExtension
     {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
 // метод расширения для донастройки Swagger (добавление возможности отправки запросов в режиме авторизованного юзера)
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class SwaggerGenCustomConfigServiceExtension
     {

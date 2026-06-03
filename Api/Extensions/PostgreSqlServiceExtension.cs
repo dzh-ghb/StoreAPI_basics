@@ -3,7 +3,7 @@ using Api.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Api.Extension
+namespace Api.Extensions
 {
     public static class PostgreSqlServiceExtension
     {
