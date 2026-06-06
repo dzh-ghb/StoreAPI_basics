@@ -5,15 +5,15 @@ using Microsoft.AspNetCore.Identity;
 public interface IStorage
 {
     #region ProductsInfrastructure
-    Product AddProduct(ProductCreateDto productCreateDto);
+    Task<Product> AddProduct(ProductCreateDto productCreateDto);
 
     List<Product> GetAllProducts();
 
     Product GetProduct(int id);
 
-    Product UpdateProduct(int id, ProductUpdateDto productUpdateDto);
+    Task<Product> UpdateProduct(int id, ProductUpdateDto productUpdateDto);
 
-    bool RemoveProduct(int id);
+    Task<bool> RemoveProductAsync(int id);
     #endregion
 
     #region AuthInfrastructure

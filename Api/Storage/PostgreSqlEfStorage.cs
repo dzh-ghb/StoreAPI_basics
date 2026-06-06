@@ -2,20 +2,23 @@ using Api.Common;
 using Api.Data;
 using Api.Model;
 using Api.ModelDto;
+using Api.Services.StorageS3;
 using Microsoft.AspNetCore.Identity;
 
 public class PostgreSqlEfStorage : IStorage
 {
     protected readonly AppDbContext dbContext;
+    private readonly IFileStorageService fileStorage;
 
-    public PostgreSqlEfStorage(AppDbContext dbContext)
+    public PostgreSqlEfStorage(AppDbContext dbContext, IFileStorageService fileStorage)
     {
         this.dbContext = dbContext;
+        this.fileStorage = fileStorage;
     }
 
     #region ProductsInfrastructure
 
-    public Product AddProduct(ProductCreateDto productCreateDto)
+    public async Task<Product> AddProduct(ProductCreateDto productCreateDto)
     {
         Product item = new()
         {
@@ -24,8 +27,8 @@ public class PostgreSqlEfStorage : IStorage
             SpecialTag = productCreateDto.SpecialTag,
             Category = productCreateDto.Category,
             Price = productCreateDto.Price,
-            // Image = productCreateDto.Image // более корректный вариант для финальной версии
-            Image = $"https://placehold.co/100" // демо-вариант с фейковым значением
+            Image = await fileStorage.UploadFileAsync(productCreateDto.Image)
+            // Image = $"https://placehold.co/100" // демо-вариант с фейковым значением
         };
 
         // добавление в БД
@@ -45,7 +48,7 @@ public class PostgreSqlEfStorage : IStorage
         return dbContext.Products.FirstOrDefault(x => x.Id == id);
     }
 
-    public Product UpdateProduct(int id, ProductUpdateDto productUpdateDto)
+    public async Task<Product> UpdateProduct(int id, ProductUpdateDto productUpdateDto)
     {
         Product item = GetProduct(id);
 
@@ -68,7 +71,9 @@ public class PostgreSqlEfStorage : IStorage
         if (productUpdateDto.Image != null
             && productUpdateDto.Image.Length > 0)
         {
-            item.Image = $"https://placehold.co/200";
+            await fileStorage.RemoveFileAsync(item.Image.Split('/').Last());
+            item.Image = await fileStorage.UploadFileAsync(productUpdateDto.Image);
+            // item.Image = $"https://placehold.co/200";
         }
 
         dbContext.Products.Update(item);
@@ -77,7 +82,7 @@ public class PostgreSqlEfStorage : IStorage
         return item;
     }
 
-    public bool RemoveProduct(int id)
+    public async Task<bool> RemoveProductAsync(int id)
     {
         Product item = GetProduct(id);
 
@@ -86,6 +91,7 @@ public class PostgreSqlEfStorage : IStorage
             return false;
         }
 
+        await fileStorage.RemoveFileAsync(item.Image.Split('/').Last());
         dbContext.Products.Remove(item);
         dbContext.SaveChanges();
 

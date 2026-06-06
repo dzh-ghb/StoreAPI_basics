@@ -14,6 +14,6 @@ namespace Api.ModelDto
         public string Category { get; set; }
         [Range(1, 100_000)]
         public double Price { get; set; }
-        public string Image { get; set; }
+        public IFormFile Image { get; set; }
     }
 }

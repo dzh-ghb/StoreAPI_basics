@@ -18,7 +18,7 @@ namespace Api.Seed
                 .RuleFor(m => m.SpecialTag, f => f.PickRandom(specialTags))
                 .RuleFor(m => m.Category, f => f.PickRandom(categories))
                 .RuleFor(m => m.Price, f => Math.Round(f.Random.Double(1, 100_000), 2))
-                .RuleFor(m => m.Image, f => $"https://placehold.co/100")
+                .RuleFor(m => m.Image, f => $"https://s3.twcstorage.ru/0d1ba99e-3e26-443d-a8a5-10254caf502f/img{Random.Shared.Next(10)}.png")
                 .Generate(count);
         }
     }

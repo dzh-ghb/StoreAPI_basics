@@ -13,7 +13,7 @@ namespace Api.Controllers
 
         [HttpPost]
         public async Task<ActionResult<ServerResponse>> Create(
-            [FromBody] ProductCreateDto productCreateDto
+            [FromForm] ProductCreateDto productCreateDto
         )
         {
             try
@@ -33,7 +33,7 @@ namespace Api.Controllers
                     }
                     else
                     {
-                        Product addedProduct = await Task.FromResult(storage.AddProduct(productCreateDto));
+                        Product addedProduct = await storage.AddProduct(productCreateDto);
 
                         ServerResponse response = new()
                         {
@@ -110,7 +110,7 @@ namespace Api.Controllers
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ServerResponse>> Update(
-            int id, [FromBody] ProductUpdateDto productUpdateDto
+            int id, [FromForm] ProductUpdateDto productUpdateDto
         )
         {
             try
@@ -128,7 +128,7 @@ namespace Api.Controllers
                     }
                     else
                     {
-                        Product updatedProduct = await Task.FromResult(storage.UpdateProduct(id, productUpdateDto));
+                        Product updatedProduct = await storage.UpdateProduct(id, productUpdateDto);
 
                         if (updatedProduct == null)
                         {
@@ -183,7 +183,7 @@ namespace Api.Controllers
                     });
                 }
 
-                bool isProductRemoved = await Task.FromResult(storage.RemoveProduct(id));
+                bool isProductRemoved = await storage.RemoveProductAsync(id);
 
                 if (isProductRemoved == false)
                 {
