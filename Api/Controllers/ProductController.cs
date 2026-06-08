@@ -77,6 +77,30 @@ namespace Api.Controllers
             return Ok(receivedProducts);
         }
 
+        [HttpGet]
+        public async Task<ActionResult<ServerResponse>> FetchProductsWithPagination(int skip = 0, int take = 5)
+        {
+            int count = storage.GetProductsCount();
+
+            if (skip < 0 || skip > count - 1 || skip + take > count || take > count - skip)
+            {
+                return BadRequest(new ServerResponse
+                {
+                    IsSuccess = false,
+                    StatusCode = HttpStatusCode.BadRequest,
+                    ErrorMessages = { "Ошибка: некорректные входные данные для работы с пагинацией" }
+                });
+            }
+
+            var productsWithPagination = await storage.GetProductsWithPagination(skip, take);
+
+            return Ok(new ServerResponse
+            {
+                StatusCode = HttpStatusCode.OK,
+                Result = productsWithPagination
+            });
+        }
+
         [HttpGet("{id}", Name = nameof(GetById))]
         public async Task<ActionResult<ServerResponse>> GetById(int id)
         {

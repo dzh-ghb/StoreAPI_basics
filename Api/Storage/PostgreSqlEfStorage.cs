@@ -4,6 +4,7 @@ using Api.Model;
 using Api.ModelDto;
 using Api.Services.StorageS3;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 public class PostgreSqlEfStorage : IStorage
 {
@@ -41,6 +42,18 @@ public class PostgreSqlEfStorage : IStorage
     public List<Product> GetAllProducts()
     {
         return dbContext.Products.ToList(); // БД.таблица.преобразовать_в_список()
+    }
+
+    public async Task<List<Product>> GetProductsWithPagination(int skip = 0, int take = 5)
+    {
+        int count = GetProductsCount();
+
+        if (skip < 0 || skip > count - 1 || skip + take > count || take > count - skip)
+        {
+            return null;
+        }
+
+        return await dbContext.Products.OrderBy(i => i.Id).Skip(skip).Take(take).ToListAsync();
     }
 
     public Product GetProduct(int id)
@@ -96,6 +109,11 @@ public class PostgreSqlEfStorage : IStorage
         dbContext.SaveChanges();
 
         return true;
+    }
+
+    public int GetProductsCount()
+    {
+        return dbContext.Products.Count();
     }
 
     #endregion

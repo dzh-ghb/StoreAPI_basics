@@ -9,11 +9,16 @@ public interface IStorage
 
     List<Product> GetAllProducts();
 
+    Task<List<Product>> GetProductsWithPagination(int skip = 0, int take = 5);
+
     Product GetProduct(int id);
 
     Task<Product> UpdateProduct(int id, ProductUpdateDto productUpdateDto);
 
     Task<bool> RemoveProductAsync(int id);
+
+    int GetProductsCount();
+
     #endregion
 
     #region AuthInfrastructure
