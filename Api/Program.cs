@@ -30,11 +30,11 @@ builder.Services.AddScoped<IStorage, PostgreSqlEfStorage>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline (порядок вызовов в конвейере важен, существуют специальные требования)
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+app.UseSwagger();
+app.UseSwaggerUI();
+// }
 
 // определение CORS-политики: разрешение всех заголовков, методов и источников
 app.UseCors(opt =>
